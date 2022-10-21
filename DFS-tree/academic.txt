@@ -1,0 +1,100 @@
+num[u]: begin dfs traversal
+tail[u]: end dfs traversal
+
+if v in Tree(u):
+<=> num[u] <= num[v] <= tail[u]
+
+low[u] = v: => (v in Tree(u) and v has first traversal) or (v traversal before and v,u is back edge)
+
+#############CODE##############
+int timeDFS = 0;
+
+void dfs(int u,int pre){
+    num[u] = low[u] = ++timeDFS;
+    for (int v : g[u]) {
+        if (v == pre) continue;
+        //v not traversal
+        if (!num[v]) {
+            dfs(v,u);
+            low[u] = min(low[u],low[v]);
+        }
+        else {
+            low[u] = min(low[u],num[v]);
+        }
+    }
+    tail[u] = timeDFS;
+}
+
+############FIND KHOP-CAU#######
+Property:
+    1) u is parent of v: if low[v] == num[v] => (u,v) is CAU-edge
+    2) u is parent of v and u is KHOP-vertex when:
+        * u is root of DFS-tree and has 2 direct children of DFS-tree
+        * u is not root and low[v] >= num[u] 
+
+###############################################################
+QUERY A,B,G1,G2 => remove edge G1,G2 => A,B is connect ?
+1)  Check g1,g2 is CAU-edge
+2)  if CAU-edge:
+        if A in subTree(G2) an B not in subTree(G2) => false
+        if B in subTree(G2) an A not in subTree(G2) => false
+        => false
+    else:
+        true
+###############################################################    
+
+###############################################################
+QUERY A,B,C => remove C => A,B is connect ?
+1)  check C is KHOP-vertex
+2)  if KHOP-vertex:
+        find pa is child of C and is ancestor of A
+        find pa is child of C and is ancestor of A
+        !pa && !pd => true
+        pa == pd => true
+        !pa && low[pb] < num[c] => true
+        !pb && low[pa] < num[c] => true
+        pa && pb && low[pa] < num[c] && low[pb] < num[c] => true
+        => false
+    else:
+        => true
+###############################################################
+
+####BO DE#######
+###########SPARSE TABLE TO FIND ANCESTOR 2^j OF I##############
+p[1][0] = 0
+for (int j = 1; j <= 19; j++) {
+    for (int i = 1; i <= n; ++i) {
+        p[i][j] = p[p[i][j - 1]][j - 1];
+    }
+}
+
+#TARJAN ALGORITHM O(N + M)
+#FIND STRONG COMPONENT => (TO MODIFY GRAPH => DAG)
+#############################################################
+void dfs(int u) {
+    low[u] = num[u] = ++timeDfs;
+    st.push(u);
+    for (int v : g[u]) {
+        if (deleted[v]) continue;
+        if (!num[v]) {
+            dfs(v);
+            low[u] = min(low[u], low[v]);
+        }
+        else low[u] = min(low[u], num[v]);
+    }
+ 
+    if (num[u] == low[u]) {
+        scc++;
+        int v;
+        do {
+            v = st.top();
+            st.pop();
+            deleted[v] = true;
+
+            /*Đỉnh scc sẽ là đỉnh ảo đại diện cho v trong đồ thị DAG*/
+            root[v] = scc;
+        } while (v != u);
+    }
+}
+
+#+==============================================================

@@ -1,0 +1,4 @@
+//Binary Lifting (SparseTable): O(NLogN) preprocessing, query O(logN)
+
+//LCA Property
+give a random root => lca(u,v) ^ lca(u,root) ^ lca(v,root) => lca of u,v with root random
