@@ -2,18 +2,20 @@
 
 using namespace std;
 
-const int maxN = 1e5 + 1;
-vector <int> a[maxN];
-vector <int> st[4*maxN];
+#define ll long long 
+
+const ll maxN = 1e5 + 1;
+vector <ll> a[maxN];
+vector <ll> st[4*maxN];
 
 //O(NLogN)
-void build(int id, int l, int r) {
+void build(ll id, ll l, ll r) {
     if (r < l) return;
     if (l == r) {
         st[id] = a[l];
         return;
     }
-    int mid = (l +  r) / 2;
+    ll mid = (l +  r) / 2;
     build(2*id,l,mid);
     build(2*id+1,mid+1,r);
     
@@ -21,26 +23,34 @@ void build(int id, int l, int r) {
 }
 
 //O(LogN*logN)
-int query(int id,int l,int r,int u,int v,int k) {
+ll query(ll id,ll l,ll r,ll u,ll v,ll k) {
     if (u > r || l > v) {
         return 0;
     }
     if (u <= l && r <= v) {
-        return upper_bound(st[id].begin() + 1,st[id].end(),k) - st[id].begin();
+        ll res = st[id].size() - (upper_bound(st[id].begin(),st[id].end(),k) - st[id].begin()); 
+        if (res > 0) return res;
+        return 0;
     }
-    int mid = (l + r)/2;
+    ll mid = (l + r)/2;
     return query(2*id,l,mid,u,v,k) + query(2*id+1,mid+1,r,u,v,k);
 }
 
 int main() {
-    int N;
+    ll N;
     cin >> N;
-    for (int i = 1; i <= N; ++i) {
-        int t;
+    for (ll i = 1; i <= N; ++i) {
+        ll t;
         cin >> t;
         a[i].push_back(t);
     }
     build(1,1,N);
-    cout << query(1,1,N,1,3,4);
+    ll q;
+    cin >> q;
+    while (q--) {
+        ll u,v,k;
+        cin >> u >> v >> k;
+        cout << query(1,1,N,u,v,k) << endl;
+    }
     return 0;
 }
