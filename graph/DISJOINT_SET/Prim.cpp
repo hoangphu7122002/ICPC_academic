@@ -22,11 +22,9 @@ int prim(int s) {
         int u = pq.top().second;
         int w = pq.top().first;
         pq.pop();
-        
         if (w != dist[u]) {
             continue;
         }
-        
         count += w;
         dist[u] = -oo; //mark xet roi
         for (auto vc : g[u]) {

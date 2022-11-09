@@ -7,10 +7,10 @@ using namespace std;
 const int maxN = 50001;
 int M,N;
 vector <int> g[maxN];
-int t = 0;
 vector <int> visited(maxN,0);
 vector <int> assign(maxN,0);
 
+int t = 0;
 bool dfs(int u) {
     if (visited[u] != t) visited[u] = t;
     else return false;
